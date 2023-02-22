@@ -1,0 +1,16 @@
+{
+  "name": "waa",
+  "version": "1.0.0",
+  "description": "a simple whatsapp bot for auto answer.",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "gdv",
+  "license": "MIT",
+  "dependencies": {
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.19.4"
+  }
+}

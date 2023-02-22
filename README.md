@@ -1,2 +1,2 @@
 # wab
-bot fot whatsapp
+a simple bot fot whatsapp to restrict audio and calls. 
