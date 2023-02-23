@@ -8,6 +8,7 @@ const REJECTCALLS = true;
 const client = new Client();
 
 client.on("qr", (qr) => {
+  console.log("scan on your WhatsApp.");
   qrcode.generate(qr, { small: true });
 });
 
