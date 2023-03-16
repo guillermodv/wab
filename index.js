@@ -1,59 +1,66 @@
-const { Client } = require("whatsapp-web.js");
-const qrcode = require("qrcode-terminal");
+const { Client } = require('whatsapp-web.js');
+const qrcode = require('qrcode-terminal');
 
-const NOAUDIOANSWER =
-  "No puedo escuchar audios en este momento, mensaje autogenerado.";
+const NOAUDIOANSWER = 'No puedo escuchar audios en este momento, mensaje autogenerado.';
 const REJECTCALLS = true;
 
 const client = new Client();
 
-client.on("qr", (qr) => {
-  console.log("scan on your WhatsApp.");
+client.on('qr', (qr) => {
+  console.log('scan on your WhatsApp.');
   qrcode.generate(qr, { small: true });
 });
 
-client.on("authenticated", () => {
-  console.log("AUTHENTICATED");
+client.on('authenticated', () => {
+  console.log('AUTHENTICATED');
 });
 
-client.on("auth_failure", (msg) => {
-  console.error("AUTHENTICATION FAILURE", msg);
+client.on('auth_failure', (msg) => {
+  console.error('AUTHENTICATION FAILURE', msg);
 });
 
-client.on("ready", () => {
-  console.log("READY");
+client.on('ready', () => {
+  console.log('READY');
 });
 
-client.on("message", (msg) => {
-  console.log("MESSAGE RECEIVED", msg.body);
-  const { waveform } = msg._data;
-  if (waveform) {
-    try {
-      msg.reply(NOAUDIOANSWER);
-    } catch (error) {
-      console.log("Error trying to response message.");
+client.on('message', (msg) => {
+  const { type, from } = msg;
+  const author = from.split('@')[0];
+  if (type === 'chat') {
+    console.log(`MESSAGE RECEIVED [${author}]: ${msg.body}`);
+  }
+  if (type === 'ptt') {
+    console.log(`AUDIO MESSAGE [${author}]`);
+    // eslint-disable-next-line no-underscore-dangle
+    const { waveform } = msg._data;
+    if (waveform) {
+      try {
+        msg.reply(NOAUDIOANSWER);
+      } catch (error) {
+        console.log('Error trying to response message.');
+      }
     }
   }
 });
 
-client.on("call", async (call) => {
+client.on('call', async (call) => {
   if (REJECTCALLS) await call.reject();
   try {
     await client.sendMessage(
       call.from,
-      `[${call.fromMe ? "Outgoing" : "Incoming"}] Phone call from ${
+      `[${call.fromMe ? 'Outgoing' : 'Incoming'}] Phone call from ${
         call.from
-      }, type ${call.isGroup ? "group" : ""} ${
-        call.isVideo ? "video" : "audio"
-      } call. ${REJECTCALLS ? "This call was automatically declined." : ""}`
+      }, type ${call.isGroup ? 'group' : ''} ${
+        call.isVideo ? 'video' : 'audio'
+      } call. ${REJECTCALLS ? 'This call was automatically declined.' : ''}`,
     );
   } catch (error) {
-    console.log("Error trying to response message.");
+    console.log('Error trying to response message.');
   }
 });
 
-client.on("disconnected", (reason) => {
-  console.log("Client was logged out", reason);
+client.on('disconnected', (reason) => {
+  console.log('Client was logged out', reason);
 });
 
 client.initialize();
